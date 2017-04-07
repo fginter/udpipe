@@ -13,11 +13,11 @@ include rest_server/microrestd/Makefile.include
 
 EXECUTABLES = $(call exe,udpipe)
 SERVER = $(call exe,rest_server/udpipe_server)
-TOOLS =
+TOOLS = $(call exe,tools/swap_embeddings)
 LIBRARIES = $(call lib,libudpipe)
 
 .PHONY: all exe server tools lib full
-all: exe
+all: exe tools
 exe: $(EXECUTABLES)
 server: $(SERVER)
 tools: $(TOOLS)
