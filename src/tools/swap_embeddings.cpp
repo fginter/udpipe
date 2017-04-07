@@ -35,12 +35,13 @@ int save_bin(parsito::embedding &e, string fname) {
   vector<pair<string, vector<float>>> words;
   vector<float> unknown_weights;
   ofstream fout(fname);
+  cerr << "Writing to " << fname << " float size= " << sizeof(float) << endl;
   e.export_embeddings(words,unknown_weights);
   fout << words.size() << " " << words[0].second.size() << "\n";
   for (auto&&pair : words) {
     fout << pair.first << " ";
     for (auto&&w : pair.second) {
-      fout.write((char *)&w,sizeof(float));
+      fout.write((char*)(void*)&w,sizeof(float));
     }
     fout << "\n";
   }
