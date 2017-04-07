@@ -24,7 +24,7 @@ class trainer_morphodita_parsito : public trainer {
  public:
   static bool train(const vector<sentence>& training, const vector<sentence>& heldout,
                     const string& tokenizer, const string& tagger, const string& parser, ostream& os, string& error);
-
+  static int swap(ostream& os, const string& from_model);
  private:
   static bool train_tokenizer(const vector<sentence>& training, const vector<sentence>& heldout,
                               const string& options, ostream& os, string& error);

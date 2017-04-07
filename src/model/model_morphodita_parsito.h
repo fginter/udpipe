@@ -29,7 +29,7 @@ class model_morphodita_parsito : public model {
 
   static model* load(istream& is);
 
- private:
+ public:
   model_morphodita_parsito(unsigned version);
   unsigned version;
   enum { VERSION_LATEST = 3 };

@@ -20,6 +20,17 @@ namespace udpipe {
 const string trainer::DEFAULT;
 const string trainer::NONE = "none";
 
+int trainer::swap(ostream& os, const string& from_model) {
+  stringstream os_buffer;
+  string method="morphodita_parsito";
+  os_buffer.put(method.size());
+  os_buffer.write(method.c_str(), method.size());
+
+  int e = trainer_morphodita_parsito::swap(os_buffer,from_model);
+  os << os_buffer.rdbuf();
+  return e;
+}
+  
 bool trainer::train(const string& method, const vector<sentence>& training, const vector<sentence>& heldout,
                     const string& tokenizer, const string& tagger, const string& parser, ostream& os, string& error) {
   error.clear();
