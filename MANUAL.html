@@ -225,13 +225,15 @@
       </li>
       <li><a href="#output_format_new_conllu_output_format">6.9.4. output_format::new_conllu_output_format()</a>
       </li>
-      <li><a href="#output_format_new_matxin_output_format">6.9.5. output_format::new_matxin_output_format()</a>
+      <li><a href="#output_format_new_epe_output_format">6.9.5. output_format::new_epe_output_format()</a>
       </li>
-      <li><a href="#output_format_new_plaintext_output_format">6.9.6. output_format::new_plaintext_output_format()</a>
+      <li><a href="#output_format_new_matxin_output_format">6.9.6. output_format::new_matxin_output_format()</a>
       </li>
-      <li><a href="#output_format_new_horizontal_output_format">6.9.7. output_format::new_horizontal_output_format()</a>
+      <li><a href="#output_format_new_plaintext_output_format">6.9.7. output_format::new_plaintext_output_format()</a>
       </li>
-      <li><a href="#output_format_new_vertical_output_format">6.9.8. output_format::new_vertical_output_format()</a>
+      <li><a href="#output_format_new_horizontal_output_format">6.9.8. output_format::new_horizontal_output_format()</a>
+      </li>
+      <li><a href="#output_format_new_vertical_output_format">6.9.9. output_format::new_vertical_output_format()</a>
       </li>
       </ul>
     </li>
@@ -896,14 +898,25 @@ The full command syntax of <code>udpipe_server</code> is
 </p>
 <pre style="margin-top:0">
 udpipe_server [options] port (rest_id model_file acknowledgements)*
-Options: --daemon
+Options: --concurrent_models=maximum concurrently loaded models (default 10)
+         --daemon (daemonize after start)
+         --no_check_models_loadable (do not check models are loadable)
+         --no_preload_default (do not preload default model)
 </pre>
 
 <p>
 The <code>udpipe_server</code> can run either in foreground or in background (when
-<code>--daemon</code> is used). The specified model files are loaded during start and
-kept in memory all the time. This behaviour may change in future to load the
-models on demand.
+<code>--daemon</code> is used).
+</p>
+<p>
+Since UDPipe 1.1.1, the models are loaded on demand, so that at most
+<code>concurrent_models</code> (default 10) are kept in memory at the same time.
+The model files are opened during start and never closed until the server
+stops. Unless <code>no_check_models_loadable</code> is specified, the model files
+are also checked to be loadable during start. Note that the default model
+is preloaded and never released, unless <code>no_preload_default</code> is given.
+(Before UDPipe 1.1.1, specified model files were loaded during start and
+kept in memory all the time.)
 </p>
 
 <a id="model_training" name="model_training"></a>
@@ -2595,6 +2608,7 @@ class output_format {
   // Static factory methods
   static <A HREF="#output_format">output_format</A>* <A HREF="#output_format_new_output_format">new_output_format</A>(const string&amp; name);
   static <A HREF="#output_format">output_format</A>* <A HREF="#output_format_new_conllu_output_format">new_conllu_output_format</A>(const string() options = std::string());
+  static <A HREF="#output_format">output_format</A>* <A HREF="#output_format_new_epe_output_format">new_epe_output_format</A>(const string() options = std::string());
   static <A HREF="#output_format">output_format</A>* <A HREF="#output_format_new_matxin_output_format">new_matxin_output_format</A>(const string() options = std::string());
   static <A HREF="#output_format">output_format</A>* <A HREF="#output_format_new_horizontal_output_format">new_horizontal_output_format</A>(const string() options = std::string());
   static <A HREF="#output_format">output_format</A>* <A HREF="#output_format_new_plaintext_output_format">new_plaintext_output_format</A>(const string() options = std::string());
@@ -2661,6 +2675,8 @@ The following output formats are currently supported:
 <ul style="margin-top:0">
 <li><code>conllu</code>: return the <a href="#output_format_new_conllu_output_format"><code>new_conllu_output_format</code></a>
 </li>
+<li><code>epe</code>: return the <a href="#output_format_new_epe_output_format"><code>new_epe_output_format</code></a>
+</li>
 <li><code>matxin</code>: return the <a href="#output_format_new_matxin_output_format"><code>new_matxin_output_format</code></a>
 </li>
 <li><code>horizontal</code>: return the <a href="#output_format_new_horizontal_output_format"><code>new_horizontal_output_format</code></a>
@@ -2698,8 +2714,21 @@ empty nodes are ignored and spaces in forms and lemmas are converted to undersco
 </li>
 </ul>
 
+<a id="output_format_new_epe_output_format" name="output_format_new_epe_output_format"></a>
+<h3>6.9.5. output_format::new_epe_output_format()</h3>
+
+<pre>
+static <A HREF="#output_format">output_format</A>* new_epe_output_format(const string() options = std::string());
+</pre>
+
+<p>
+Creates <a href="#output_format"><code>output_format</code></a> instance for writing sentences
+in the EPE (Extrinsic Parser Evaluation 2017) interchange format.
+The new instance must be deleted after use.
+</p>
+
 <a id="output_format_new_matxin_output_format" name="output_format_new_matxin_output_format"></a>
-<h3>6.9.5. output_format::new_matxin_output_format()</h3>
+<h3>6.9.6. output_format::new_matxin_output_format()</h3>
 
 <pre>
 static <A HREF="#output_format">output_format</A>* new_matxin_output_format(const string() options = std::string());
@@ -2729,7 +2758,7 @@ The new instance must be deleted after use.
 </p>
 
 <a id="output_format_new_plaintext_output_format" name="output_format_new_plaintext_output_format"></a>
-<h3>6.9.6. output_format::new_plaintext_output_format()</h3>
+<h3>6.9.7. output_format::new_plaintext_output_format()</h3>
 
 <pre>
 static <A HREF="#output_format">output_format</A>* new_plaintext_output_format(const string() options = std::string());
@@ -2750,7 +2779,7 @@ normalized spacing is wanted, you can use the following option:
 </ul>
 
 <a id="output_format_new_horizontal_output_format" name="output_format_new_horizontal_output_format"></a>
-<h3>6.9.7. output_format::new_horizontal_output_format()</h3>
+<h3>6.9.8. output_format::new_horizontal_output_format()</h3>
 
 <pre>
 static <A HREF="#output_format">output_format</A>* new_horizontal_output_format(const string() options = std::string());
@@ -2775,7 +2804,7 @@ or a document (recognized by <code># newpar</code> or <code># newdoc</code> comm
 </ul>
 
 <a id="output_format_new_vertical_output_format" name="output_format_new_vertical_output_format"></a>
-<h3>6.9.8. output_format::new_vertical_output_format()</h3>
+<h3>6.9.9. output_format::new_vertical_output_format()</h3>
 
 <pre>
 static <A HREF="#output_format">output_format</A>* new_vertical_output_format(const string() options = std::string());
@@ -3335,6 +3364,7 @@ class OutputFormat {
 
   static OutputFormat* newOutputFormat(const string&amp; name);
   static OutputFormat* newConlluOutputFormat(const string&amp; options = string());
+  static OutputFormat* newEpeOutputFormat(const string&amp; options = string());
   static OutputFormat* newMatxinOutputFormat(const string&amp; options = string());
   static OutputFormat* newHorizontalOutputFormat(const string&amp; options = string());
   static OutputFormat* newPlaintextOutputFormat(const string&amp; options = string());

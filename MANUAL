@@ -446,11 +446,21 @@ and provides UDPipe REST API
 
 The full command syntax of udpipe_server is
   udpipe_server [options] port (rest_id model_file acknowledgements)*
-  Options: --daemon
+  Options: --concurrent_models=maximum concurrently loaded models (default 10)
+           --daemon (daemonize after start)
+           --no_check_models_loadable (do not check models are loadable)
+           --no_preload_default (do not preload default model)
 
 The udpipe_server can run either in foreground or in background (when --daemon
-is used). The specified model files are loaded during start and kept in memory
-all the time. This behaviour may change in future to load the models on demand.
+is used).
+
+Since UDPipe 1.1.1, the models are loaded on demand, so that at most
+concurrent_models (default 10) are kept in memory at the same time. The model
+files are opened during start and never closed until the server stops. Unless
+no_check_models_loadable is specified, the model files are also checked to be
+loadable during start. Note that the default model is preloaded and never
+released, unless no_preload_default is given. (Before UDPipe 1.1.1, specified
+model files were loaded during start and kept in memory all the time.)
 
 
 Training UDPipe Models
@@ -1509,6 +1519,7 @@ Class output_format
     // Static factory methods
     static output_format* new_output_format(const string& name);
     static output_format* new_conllu_output_format(const string() options = std::string());
+    static output_format* new_epe_output_format(const string() options = std::string());
     static output_format* new_matxin_output_format(const string() options = std::string());
     static output_format* new_horizontal_output_format(const string() options = std::string());
     static output_format* new_plaintext_output_format(const string() options = std::string());
@@ -1556,6 +1567,7 @@ output_format::new_output_format()
 Create new output_format instance, given its name. The following output formats
 are currently supported:
 - conllu: return the new_conllu_output_format
+- epe: return the new_epe_output_format
 - matxin: return the new_matxin_output_format
 - horizontal: return the new_horizontal_output_format
 - plaintext: return the new_plaintext_output_format
@@ -1578,6 +1590,16 @@ Supported options:
 - v1: produce output in CoNLL-U v1 format. Note that this is a lossy process,
   as empty nodes are ignored and spaces in forms and lemmas are converted to
   underscores.
+
+
+output_format::new_epe_output_format()
+--------------------------------------
+
+  static output_format* new_epe_output_format(const string() options = std::string());
+
+Creates output_format instance for writing sentences in the EPE (Extrinsic
+Parser Evaluation 2017) interchange format. The new instance must be deleted
+after use.
 
 
 output_format::new_matxin_output_format()
@@ -2100,6 +2122,7 @@ Main Classes
 
     static OutputFormat* newOutputFormat(const string& name);
     static OutputFormat* newConlluOutputFormat(const string& options = string());
+    static OutputFormat* newEpeOutputFormat(const string& options = string());
     static OutputFormat* newMatxinOutputFormat(const string& options = string());
     static OutputFormat* newHorizontalOutputFormat(const string& options = string());
     static OutputFormat* newPlaintextOutputFormat(const string& options = string());
