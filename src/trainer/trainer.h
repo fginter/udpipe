@@ -17,7 +17,6 @@ namespace udpipe {
 
 class trainer {
  public:
-  static int swap(ostream& os, const string& from_model);
   static bool train(const string& method, const vector<sentence>& train, const vector<sentence>& heldout,
                     const string& tokenizer, const string& tagger, const string& parser, ostream& os, string& error);
 

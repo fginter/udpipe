@@ -42,46 +42,6 @@
 namespace ufal {
 namespace udpipe {
 
-int trainer_morphodita_parsito::swap(ostream& os, const string& from_model) {
-  // Save model version info
-  os.put(model_morphodita_parsito::VERSION_LATEST);
-  // Add sentinel required since version 2
-  os.put(0x7F).put(0x7F);
-
-  // Pass tokenizer data unchanged
-  string_piece tokenizer_data;
-  if (!load_model(from_model, TOKENIZER_MODEL, tokenizer_data))
-    runtime_error("Cannot load model from which the tokenizer should be used!");
-  
-  cerr << "Using tokenizer from given model." << endl;
-  os.write(tokenizer_data.str, tokenizer_data.len);
-  cerr << "Written " << tokenizer_data.len << "B of tokenizer data" << endl;
-
-  //tagger(s?)
-  {
-    // Use specified tokenizer model(s)
-    int model_index = 1, taggers_total = 0;
-    vector<string_piece> taggers_data;
-    do {
-      taggers_data.emplace_back();
-      if (!load_model(from_model, TAGGER_MODEL, taggers_data.back()))
-	runtime_error("Cannot load model from which the tagger should be used!");
-      if (taggers_data.back().str[0])
-	taggers_total += taggers_data.back().str[0];
-      else
-	taggers_data.pop_back();
-      string model_name = "from_model_" + to_string(++model_index);
-    } while (false); //(tagger.count(model_name));
-    if (taggers_total < 0 || taggers_total > 4) runtime_error("Cannot create more than four tagger models!");
-    
-    cerr << "Using tagger from given model(s)." << endl;
-    os.put(taggers_total);
-    for (auto&& tagger_data : taggers_data)
-      cerr << tagger_data.len << "B written" << endl;
-    //xxxos.write(tagger_data.str + 1, tagger_data.len - 1);
-  }
-
-}
   
 bool trainer_morphodita_parsito::train(const vector<sentence>& training, const vector<sentence>& heldout,
                                        const string& tokenizer, const string& tagger, const string& parser, ostream& os, string& error) {

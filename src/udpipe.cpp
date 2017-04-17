@@ -21,8 +21,12 @@
 #include "utils/getpara.h"
 #include "utils/iostreams.h"
 #include "utils/options.h"
+#include "utils/named_values.h"
 #include "utils/process_args.h"
 #include "version/version.h"
+#include "parsito/embedding/embedding.h"
+#include "model/model_morphodita_parsito.h"
+#include "parsito/parser/parser_nn.h"
 
 using namespace ufal::udpipe;
 
@@ -163,6 +167,24 @@ int main(int argc, char* argv[]) {
       cerr << "Loading UDPipe model: " << flush;
       model.reset(model::load(argv[1]));
       if (!model) runtime_failure("Cannot load UDPipe model '" << argv[1] << "'!");
+
+      //Filip's code -> smuggle in new embeddings now that the model is loaded
+      named_values::map parser_opts;
+      string error;
+      if (!named_values::parse(options["parser"], parser_opts, error)) return false;
+      if (parser_opts.count("extra_form_emb")) {
+	parsito::parser_nn *parser=(parsito::parser_nn*)(((model_morphodita_parsito*)model.get())->parser.get());
+	cerr << "Extra form embeddings " << parser_opts["extra_form_emb"]<< endl;
+	parsito::embedding e;
+	e.read_from_txtfile(parser_opts["extra_form_emb"]);
+	//vector<string> selectors={"form","lemma","lemma_id","tag","utag","feats","utagfeats","deprel"};
+	for (int i=0 ; i<parser->values.size() ; i++) {
+	  if (parser->values[i].selector==0) { // 0==form
+	    parser->embeddings[i]=e;
+	  }
+	}
+      }
+      
       cerr << "done." << endl;
     }
 

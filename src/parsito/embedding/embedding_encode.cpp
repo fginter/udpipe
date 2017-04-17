@@ -9,6 +9,11 @@
 
 #include "common.h"
 #include "embedding.h"
+#include <fstream>
+#include "utils/split.h"
+#include "utils/parse_double.h"
+#include "utils/parse_int.h"
+
 
 namespace ufal {
 namespace udpipe {
@@ -38,6 +43,40 @@ bool embedding::can_update_weights(int id) const {
   return id >= int(updatable_index);
 }
 
+  void embedding::read_from_txtfile(string fname) {
+
+    ifstream in(fname.c_str());
+    if (!in.is_open()) cerr << "Cannot open " << fname << endl;
+
+    // Load first line containing dictionary size and dimensions
+    string line;
+    vector<string_piece> parts;
+    if (!getline(in, line)) cerr << "Cannot read first line from embedding file '" << fname << "'!";
+    split(line, ' ', parts);
+    if (parts.size() != 2) cerr << "Expected two numbers on the first line of embedding file '" << fname << "'!";
+    int file_dimension = parse_int(parts[1], "embedding file dimension");
+    int dict_size=parse_int(parts[0], "embedding file dictsize");
+    
+    // Load input embedding
+    vector<double> lweights(file_dimension);
+    int counter=0;
+    while (getline(in, line)) { //&& int(weights.size()) < max_embeddings) {
+        split(line, ' ', parts);
+        if (!parts.empty() && !parts.back().len) parts.pop_back(); // Ignore space at the end of line
+        if (int(parts.size()) != file_dimension + 1) cerr << "Wrong number of values on line '" << line << "' of embedding file '" << fname << endl;
+        for (int i = 0; i < file_dimension; i++)
+          lweights[i] = parse_double(parts[1 + i], "embedding weight");
+
+        string word(parts[0].str, parts[0].len);
+
+	dictionary.emplace(word,counter);
+	weights.insert(weights.end(), lweights.begin(), lweights.end());
+	counter++;
+      }
+    //      embeddings_from_file = weights.size();
+    //  updatable_index = update_weights ? 0 : embeddings_from_file;
+}
+  
 void embedding::create(unsigned dimension, int updatable_index, const vector<pair<string, vector<float>>>& words, const vector<float>& unknown_weights) {
   this->dimension = dimension;
   this->updatable_index = updatable_index;
