@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
   	  {"version", options::value::none},
   	    {"help", options::value::none}}, argc, argv, options) ||
     options.count("help") ||
-    (argc < 4 && !options.count("version")))
+    (argc != 2 && !options.count("version")))
     runtime_failure("Usage: " << argv[0] << " model_file\n"
   		    "         --version\n"
   		    "         --help");
