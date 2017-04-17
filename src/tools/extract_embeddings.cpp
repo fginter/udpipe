@@ -58,19 +58,13 @@ int main(int argc, char* argv[]) {
   	    {"help", options::value::none}}, argc, argv, options) ||
     options.count("help") ||
     (argc < 4 && !options.count("version")))
-    runtime_failure("Usage: " << argv[0] << " [options] [extract|replace] embedding_name model_file\n"
-  		    "Options: --precision=precision of extraced embeddings [6]\n"
+    runtime_failure("Usage: " << argv[0] << " model_file\n"
   		    "         --version\n"
   		    "         --help");
   if (options.count("version"))
     return cout << version::version_and_copyright() << endl, 0;
 
-  if (argv[1] != string("extract")) /// && argv[1] != string("replace"))
-    runtime_failure("The first argument must be 'extract'!");
-  bool extract = argv[1] == string("extract");
-  int precision = options.count("precision") ? parse_int(options["precision"], "precision option") : 6;
-  string requested_embedding = argv[2];
-  string model_file = argv[3];
+  string model_file = argv[1];
   
   // Load model
   unique_ptr<model> model;
