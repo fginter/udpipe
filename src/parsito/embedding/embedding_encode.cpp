@@ -56,6 +56,10 @@ bool embedding::can_update_weights(int id) const {
     if (parts.size() != 2) cerr << "Expected two numbers on the first line of embedding file '" << fname << "'!";
     int file_dimension = parse_int(parts[1], "embedding file dimension");
     int dict_size=parse_int(parts[0], "embedding file dictsize");
+
+    dimension=file_dimension;
+    dictionary.clear();
+    unknown_index=-1;
     
     // Load input embedding
     vector<double> lweights(file_dimension);
