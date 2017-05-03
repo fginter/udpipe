@@ -13,9 +13,9 @@ for line in sys.stdin.buffer:
                 w=line[:someidx].decode("utf-8")
                 break
             except UnicodeDecodeError:
-                traceback.print_exc()
+                #traceback.print_exc()
                 pass
         else:
             raise ValueError("No luck")
-        print(w,line[spaceidx+1:].decode("utf-8"))
+        print(w,line[spaceidx+1:].decode("utf-8"),end="")
         
