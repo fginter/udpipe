@@ -189,7 +189,7 @@ void parser_nn_trainer::train(const string& transition_system_name, const string
       embeddings_from_file = weights.size();
       updatable_index = update_weights ? 0 : embeddings_from_file;
     }
-
+    /* fginter commented this out
     // Add embedding for non-present word with min_count, sorted by count
     {
       vector<pair<int, string>> count_words;
@@ -208,7 +208,7 @@ void parser_nn_trainer::train(const string& transition_system_name, const string
         weights.emplace_back(count_word.second, word_weights);
       }
     }
-
+    */
     // If there are unknown words in the training data, create initial embedding
     vector<float> unknown_weights(dimension);
     if (min_count > 1) {
@@ -217,7 +217,7 @@ void parser_nn_trainer::train(const string& transition_system_name, const string
       for (auto&& weight : unknown_weights)
         weight = uniform(generator);
     }
-
+    
     // Add the embedding
     parser.embeddings.emplace_back();
     parser.embeddings.back().create(dimension, updatable_index, weights, unknown_weights);
