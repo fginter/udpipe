@@ -37,7 +37,7 @@ int save_bin(parsito::embedding &e, string fname) {
   ofstream fout(fname);
   cerr << "Writing to " << fname << " float size= " << sizeof(float) << endl;
   e.export_embeddings(words,unknown_weights);
-  fout << words.size() << " " << words[0].second.size() << "\n";
+  fout << words.size()+1 << " " << words[0].second.size() << "\n"; //+1 because of the unknown word "parsitounk"
   for (auto&&pair : words) {
     fout << pair.first << " ";
     for (auto&&w : pair.second) {
@@ -48,6 +48,30 @@ int save_bin(parsito::embedding &e, string fname) {
   fout.flush();
   fout.close();
 }
+
+int save_txt(parsito::embedding &e, string fname) {
+  vector<pair<string, vector<float>>> words;
+  vector<float> unknown_weights;
+  ofstream fout(fname);
+  cerr << "Writing to " << fname << " float size= " << sizeof(float) << endl;
+  e.export_embeddings(words,unknown_weights);
+  fout << words.size() << " " << words[0].second.size() << "\n";
+  for (auto&&pair : words) {
+    fout << pair.first;
+    for (auto&&w : pair.second) {
+      fout << " " << w;
+    }
+    fout << "\n";
+  }
+  fout << "parsitounk";
+  for (auto&&w : unknown_weights) {
+    fout << " " << w;
+  }
+  fout << "\n";
+  fout.flush();
+  fout.close();
+}
+
 
 int main(int argc, char* argv[]) {
   iostreams_init();
@@ -79,7 +103,8 @@ int main(int argc, char* argv[]) {
   vector<string> selectors={"form","lemma","lemma_id","tag","utag","feats","utagfeats","deprel"};
   for (int i=0 ; i<parser->values.size() ; i++) {
     cerr << "values " << parser->values[i].selector << endl; //->parser.embeddings_values[0[0] << endl;
-    save_bin(parser->embeddings[i], model_file+string("_emb.")+selectors[parser->values[i].selector]+string(".bin"));
+    cerr << "unknown index " << parser->embeddings[i].unknown_index << endl; //->parser.embeddings_values[0[0] << endl;
+    save_txt(parser->embeddings[i], model_file+string("_emb.")+selectors[parser->values[i].selector]+string(".vectors"));
   }
   // ifstream is(model_file.c_str(), ifstream::in | ifstream::binary);
   
