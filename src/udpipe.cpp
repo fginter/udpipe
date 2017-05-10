@@ -172,8 +172,8 @@ int main(int argc, char* argv[]) {
       named_values::map parser_opts;
       string error;
       if (!named_values::parse(options["parser"], parser_opts, error)) return false;
+      parsito::parser_nn *parser=(parsito::parser_nn*)(((model_morphodita_parsito*)model.get())->parser.get());
       if (parser_opts.count("extra_form_emb")) {
-	parsito::parser_nn *parser=(parsito::parser_nn*)(((model_morphodita_parsito*)model.get())->parser.get());
 	cerr << "Extra form embeddings " << parser_opts["extra_form_emb"]<< endl;
 	parsito::embedding e;
 	e.read_from_txtfile(parser_opts["extra_form_emb"]);
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 	  }
 	}
       }
-      
+      parser->network.generate_embeddings_cache(parser->embeddings,parser->embeddings_cache,1000);
       cerr << "done." << endl;
     }
 

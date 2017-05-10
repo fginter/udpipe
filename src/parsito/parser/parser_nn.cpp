@@ -108,7 +108,7 @@ void parser_nn::parse_beam_search(tree& t, unsigned beam_size) const {
     for (size_t j = 0; j < embeddings.size(); j++) {
       values[j].extract(t.nodes[i], w->embeddings_values[i][j]);
       w->embeddings[i][j] = embeddings[j].lookup_word(w->embeddings_values[i][j], w->word_buffer);
-      cerr << j << " " << w->embeddings_values[i][j] << " " << w->embeddings[i][j] << endl;
+      //      cerr << j << " " << w->embeddings_values[i][j] << " " << w->embeddings[i][j] << endl;
     }
   }
 
@@ -212,6 +212,8 @@ void parser_nn::workspace::beam_size_configuration::save_tree() {
 void parser_nn::load(binary_decoder& data, unsigned cache) {
   string description, error;
 
+  cerr << "MY CACHE SIZE " << cache << endl;
+  
   version = versioned ? data.next_1B() : 1;
   if (!(version >= 1 && version <= VERSION_LATEST))
     throw binary_decoder_error("Unrecognized version of the parser_nn model");
