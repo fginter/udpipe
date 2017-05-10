@@ -210,6 +210,18 @@ int main(int argc, char* argv[]) {
 	}
       }
 
+      if (parser_opts.count("extra_tag_emb")) {
+	cerr << "Extra tag (xpos) embeddings " << parser_opts["extra_tag_emb"]<< endl;
+	parsito::embedding e;
+	e.read_from_txtfile(parser_opts["extra_tag_emb"]);
+	for (int i=0 ; i<parser->values.size() ; i++) {
+	  if (parser->values[i].selector==3) { // 3==tag
+	    parser->embeddings[i]=e;
+	    break;
+	  }
+	}
+      }
+
       
       parser->network.generate_embeddings_cache(parser->embeddings,parser->embeddings_cache,1000);
       cerr << "done." << endl;

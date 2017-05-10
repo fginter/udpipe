@@ -295,7 +295,11 @@ bool trainer_morphodita_parsito::train_parser(const vector<sentence>& training, 
 	if (!option_str(parser, "embedding_feats_file").empty()) embeddings.append(" ").append(option_str(parser, "embedding_feats_file"));
         embeddings.push_back('\n');
       }
-      if (embedding_xpostag) embeddings.append("tag ").append(to_string(embedding_xpostag)).append(" 1\n");
+      if (embedding_xpostag) {
+	embeddings.append("tag ").append(to_string(embedding_xpostag)).append(" 2");
+	if (!option_str(parser, "embedding_tag_file").empty()) embeddings.append(" ").append(option_str(parser, "embedding_tag_file"));
+        embeddings.push_back('\n');
+      }
       if (embedding_form) {
         embeddings.append("form ").append(to_string(embedding_form)).append(" 2");
         if (!option_str(parser, "embedding_form_file").empty()) embeddings.append(" ").append(option_str(parser, "embedding_form_file"));
