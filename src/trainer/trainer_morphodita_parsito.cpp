@@ -290,7 +290,11 @@ bool trainer_morphodita_parsito::train_parser(const vector<sentence>& training, 
       int embedding_deprel = 20; if (!option_int(parser, "embedding_deprel", embedding_deprel, error)) return false;
       string embeddings;
       if (embedding_upostag) embeddings.append("universal_tag ").append(to_string(embedding_upostag)).append(" 1\n");
-      if (embedding_feats) embeddings.append("feats ").append(to_string(embedding_feats)).append(" 1\n");
+      if (embedding_feats) {
+	embeddings.append("feats ").append(to_string(embedding_feats)).append(" 2");
+	if (!option_str(parser, "embedding_feats_file").empty()) embeddings.append(" ").append(option_str(parser, "embedding_feats_file"));
+        embeddings.push_back('\n');
+      }
       if (embedding_xpostag) embeddings.append("tag ").append(to_string(embedding_xpostag)).append(" 1\n");
       if (embedding_form) {
         embeddings.append("form ").append(to_string(embedding_form)).append(" 2");

@@ -93,6 +93,7 @@ void parser_nn_trainer::train(const string& transition_system_name, const string
   vector<string_piece> lines, tokens;
   split(embeddings_description, '\n', lines);
   for (auto&& line : lines) {
+    cerr << "Embeddings desc line " << line << endl;
     // Ignore empty lines and comments
     if (!line.len || line.str[0] == '#') continue;
 
