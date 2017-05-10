@@ -37,7 +37,7 @@ int save_bin(parsito::embedding &e, string fname) {
   ofstream fout(fname);
   cerr << "Writing to " << fname << " float size= " << sizeof(float) << endl;
   e.export_embeddings(words,unknown_weights);
-  fout << words.size()+1 << " " << words[0].second.size() << "\n"; //+1 because of the unknown word "parsitounk"
+  fout << words.size() << " " << words[0].second.size() << "\n"; //+1 because of the unknown word "parsitounk"
   for (auto&&pair : words) {
     fout << pair.first << " ";
     for (auto&&w : pair.second) {
@@ -55,7 +55,7 @@ int save_txt(parsito::embedding &e, string fname) {
   ofstream fout(fname);
   cerr << "Writing to " << fname << " float size= " << sizeof(float) << endl;
   e.export_embeddings(words,unknown_weights);
-  fout << words.size() << " " << words[0].second.size() << "\n";
+  fout << words.size()+1 << " " << words[0].second.size() << "\n";
   for (auto&&pair : words) {
     fout << pair.first;
     for (auto&&w : pair.second) {

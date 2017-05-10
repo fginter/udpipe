@@ -59,8 +59,9 @@ bool embedding::can_update_weights(int id) const {
 
     dimension=file_dimension;
     dictionary.clear();
-    unknown_index=-1;
-    
+    weights.clear();
+    unknown_index=dict_size-1;
+    updatable_index=dict_size-1;
     // Load input embedding
     vector<double> lweights(file_dimension);
     int counter=0;
@@ -77,6 +78,9 @@ bool embedding::can_update_weights(int id) const {
 	weights.insert(weights.end(), lweights.begin(), lweights.end());
 	counter++;
       }
+    //cerr << "Weights after" << weights.size() << endl;
+    //cerr << "Dict after" << dictionary.size() << endl;
+    //cerr << "w[0]" << weights[0] << endl;
     //      embeddings_from_file = weights.size();
     //  updatable_index = update_weights ? 0 : embeddings_from_file;
 }

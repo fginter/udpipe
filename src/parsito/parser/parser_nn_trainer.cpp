@@ -212,7 +212,7 @@ void parser_nn_trainer::train(const string& transition_system_name, const string
     
     // If there are unknown words in the training data, create initial embedding
     vector<float> unknown_weights(dimension);
-    if (min_count > 1) {
+    if (min_count > 1 or embedding_given) { //fginter added or ...
       uniform_real_distribution<float> uniform(-1, 1);
 
       for (auto&& weight : unknown_weights)

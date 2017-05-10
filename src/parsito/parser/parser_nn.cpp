@@ -108,6 +108,7 @@ void parser_nn::parse_beam_search(tree& t, unsigned beam_size) const {
     for (size_t j = 0; j < embeddings.size(); j++) {
       values[j].extract(t.nodes[i], w->embeddings_values[i][j]);
       w->embeddings[i][j] = embeddings[j].lookup_word(w->embeddings_values[i][j], w->word_buffer);
+      cerr << j << " " << w->embeddings_values[i][j] << " " << w->embeddings[i][j] << endl;
     }
   }
 

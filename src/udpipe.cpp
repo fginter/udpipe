@@ -181,6 +181,7 @@ int main(int argc, char* argv[]) {
 	for (int i=0 ; i<parser->values.size() ; i++) {
 	  if (parser->values[i].selector==0) { // 0==form
 	    parser->embeddings[i]=e;
+	    break;
 	  }
 	}
       }

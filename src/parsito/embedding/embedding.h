@@ -39,7 +39,7 @@ class embedding {
   void export_embeddings(vector<pair<string, vector<float>>>& words, vector<float>& unknown_weights) const;
 
   void read_from_txtfile(string fname);
- private:
+
   int updatable_index, unknown_index;
 
   unordered_map<string, int> dictionary;
