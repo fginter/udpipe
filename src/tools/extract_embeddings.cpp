@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
 
   //uhhuh
   parsito::parser_nn *parser=(parsito::parser_nn*)(((model_morphodita_parsito*)model.get())->parser.get());
-
+  //                           0     1       2          3     4       5        6         7
   vector<string> selectors={"form","lemma","lemma_id","tag","utag","feats","utagfeats","deprel"};
   for (int i=0 ; i<parser->values.size() ; i++) {
     cerr << "values " << parser->values[i].selector << endl; //->parser.embeddings_values[0[0] << endl;

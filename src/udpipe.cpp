@@ -173,11 +173,11 @@ int main(int argc, char* argv[]) {
       string error;
       if (!named_values::parse(options["parser"], parser_opts, error)) return false;
       parsito::parser_nn *parser=(parsito::parser_nn*)(((model_morphodita_parsito*)model.get())->parser.get());
+
       if (parser_opts.count("extra_form_emb")) {
 	cerr << "Extra form embeddings " << parser_opts["extra_form_emb"]<< endl;
 	parsito::embedding e;
 	e.read_from_txtfile(parser_opts["extra_form_emb"]);
-	//vector<string> selectors={"form","lemma","lemma_id","tag","utag","feats","utagfeats","deprel"};
 	for (int i=0 ; i<parser->values.size() ; i++) {
 	  if (parser->values[i].selector==0) { // 0==form
 	    parser->embeddings[i]=e;
@@ -185,6 +185,32 @@ int main(int argc, char* argv[]) {
 	  }
 	}
       }
+
+      if (parser_opts.count("extra_utag_emb")) {
+	cerr << "Extra utag embeddings " << parser_opts["extra_utag_emb"]<< endl;
+	parsito::embedding e;
+	e.read_from_txtfile(parser_opts["extra_utag_emb"]);
+	for (int i=0 ; i<parser->values.size() ; i++) {
+	  if (parser->values[i].selector==4) { // 4==universal tag
+	    parser->embeddings[i]=e;
+	    break;
+	  }
+	}
+      }
+
+      if (parser_opts.count("extra_feats_emb")) {
+	cerr << "Extra feats embeddings " << parser_opts["extra_feats_emb"]<< endl;
+	parsito::embedding e;
+	e.read_from_txtfile(parser_opts["extra_feats_emb"]);
+	for (int i=0 ; i<parser->values.size() ; i++) {
+	  if (parser->values[i].selector==5) { // 5==feats
+	    parser->embeddings[i]=e;
+	    break;
+	  }
+	}
+      }
+
+      
       parser->network.generate_embeddings_cache(parser->embeddings,parser->embeddings_cache,1000);
       cerr << "done." << endl;
     }
